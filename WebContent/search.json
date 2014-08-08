@@ -1,0 +1,21 @@
+{
+  "function_score": {
+    "query": {
+      "query_string" : {
+        "fields" : ["title^1.0", "category^0.33", "domain1^0.2", "domain2^0.2", "domain3^0.2", "domain4^0.2", "domain5^0.2", "publisher^0.375", "description^0.33"],
+        "query" : "%s",
+        "default_operator": "AND", 
+        "use_dis_max" : true
+      }
+    },
+    "functions": [
+      {
+        "script_score": {
+          "lang" : "groovy",
+          "script": "(1.0 / ((5.25 * (1.0-(_score/%.6f))) + 0.667)) + 6.2 * ((0.335 * (1.28 / (1 + (Math.pow(Math.E, (((new Date().minus(new Date(doc['updated'].value))) - 183) / 145))))) + doc['appscore'].value) / 1.335)"
+        }
+      }
+    ],
+    "boost_mode": "replace"
+  }
+}
